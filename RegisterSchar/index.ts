@@ -37,8 +37,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         context.bindings.scharOut = schar;
 
         let token = await getToken();
-        context.log("Token: ", token);
-
         let mail = await sendMail(token, schar);
         context.log("Mail: ", mail);
 
@@ -122,7 +120,7 @@ async function sendMail(token: string, schar: any) {
                 "toRecipients": [
                     {
                         "emailAddress": {
-                            "address": schar.mail
+                            "address": schar.email
                         }
                     }
                 ]
