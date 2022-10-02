@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "qs": "^6.11.0"
+    "qs": "^6.11.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@azure/functions": "^3.0.0",
