@@ -29,26 +29,31 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         delete req.body["g-recaptcha-response"];
     }
 
-    if (validation) {
-        // Set Default Header for Axios Requests
-        axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+    let uuid = uuidv4();
+    let schar = req.body;
+    schar.id = uuid;
+
+    context.log("Schar: ", schar);
+
+    try {
+        context.bindings.scharOut = schar;
+
         let token = await getToken();
-        let response = await sendMail(token, req.body);
-    
-        await sendToTeams(req.body);
-    
-        context.log(response)
-    
+        let mail = await sendMail(token, schar);
+        context.log("Mail: ", mail);
+
         context.res = {
-          // status: 200, /* Defaults to 200 */
-          body: req.body
-        };
-      } else {
-        context.log("validation failed");
-        context.res = {
-          status: 500
+            status: 200,
+            body: "successful"
         }
-      }
+        return
+    } catch (e) {
+        context.res = {
+            status: 500,
+            body: "server error"
+        }
+        return
+    }
 
 };
 
