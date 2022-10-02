@@ -1,0 +1,28 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "name": "scharenIn",
+      "type": "cosmosDB",
+      "connectionStringSetting": "Jublaost_COSMOSDB",
+      "databaseName": "pfila23",
+      "collectionName": "scharen",
+      "direction": "in"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ],
+  "scriptFile": "../dist/GetScharen/index.js"
+}
