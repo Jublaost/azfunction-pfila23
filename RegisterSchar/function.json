@@ -1,0 +1,30 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "name": "scharOut",
+      "type": "cosmosDB",
+      "databaseName": "pfila23",
+      "collectionName": "scharen",
+      "createIfNotExists": true,
+      "partitionKey": "/id",
+      "connectionStringSetting": "Jublaost_COSMOSDB",
+      "direction": "out"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ],
+  "scriptFile": "../dist/RegisterSchar/index.js"
+}
