@@ -4,7 +4,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log('HTTP trigger function processed a request.');
 
     let message = "";
-    message += `Total Scharen: ${scharenIn.length}\n`
+    message += `Scharen: ${scharenIn.length}\n`
 
     let count_tn = 0;
     let count_leader = 0;
@@ -14,8 +14,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         count_leader += parseInt(schar.num_leader);
     }
 
-    message += `Total TN: ${count_tn}\n`
-    message += `Total Leiter: ${count_leader}\n`
+    message += `TN: ${count_tn}\n`
+    message += `Leiter: ${count_leader}\n`
     message += `Total: ${count_tn + count_leader}\n`
 
     context.res = {
