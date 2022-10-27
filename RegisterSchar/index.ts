@@ -117,7 +117,7 @@ async function sendMail(token: string, schar: any) {
                 "subject": "Schön seid ihr dabei!",
                 "body": {
                     "contentType": "html",
-                    "content": "Hallo!<br /><br />Cool hast du deine Schar '" + schar.schar + "' angemeldet!<br />Bei Fragen oder unklarheiten kannst du auf diese Mail antworten oder direkt: <a href='mailto:ok@pfila23.ch'>Pfila23 OK</a><br /><br />Jublastische Grüsse<br />Das Pfila23 Team"
+                    "content": "Hallo!<br /><br />Cool hast du deine Schar '" + schar.schar + "' angemeldet!<br />Bei Fragen oder Unklarheiten kannst du auf diese Mail antworten oder direkt: <a href='mailto:ok@pfila23.ch'>Pfila23 OK</a><br /><br />Jublastische Grüsse<br />Das Pfila23 Team"
                 },
                 "toRecipients": [
                     {
