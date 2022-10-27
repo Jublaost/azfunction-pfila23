@@ -23,5 +23,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/GetScharen/index.js"
+  "scriptFile": "../dist/GetOverview/index.js"
 }
