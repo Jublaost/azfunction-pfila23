@@ -4,7 +4,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 const SITE_ID = process.env.SITE_ID;
 const SITE_ASSETS_ID = process.env.SITE_ASSETS_ID;
-const LIST_ID = process.env.LEITENDE_LIST_ID;
+const LIST_ID = process.env.TN_LIST_ID;
 
 const MS_GRAPH_ENDPOINT_LISTITEM = 'https://graph.microsoft.com/v1.0/sites/' + SITE_ID + '/lists/' + LIST_ID + '/items';
 const MS_GRAPH_ENDPOINT_UPLOAD = 'https://graph.microsoft.com/v1.0/sites/' + SITE_ID + '/drives/' + SITE_ASSETS_ID + '/root:/Lists/' + LIST_ID + '/';
@@ -107,7 +107,7 @@ async function sendMail(token: string, body: any) {
                 "subject": "Bestätigung Anmeldung Pfila23",
                 "body": {
                     "contentType": "html",
-                    "content": "Hallo " + body.vorname + "<br /><br /><strong>Wir freuen uns sehr, dass du am diesjährigen Pfila als Leiter dabei bist!</strong><br />Die detaillierten Informationen werden zu einem späteren Zeitpunkt zugestellt.<br />Bei allfälligen Fragen wende dich bitte an: ok@pfila23.ch<br /><br />Jublastische Grüsse<br />Das Pfila23 Team"
+                    "content": "Hallo " + body.vorname + "<br /><br /><strong>Wir freuen uns sehr, dass du am diesjährigen Pfila als Teilnehmer dabei bist!</strong><br />Die detaillierten Informationen werden zu einem späteren Zeitpunkt zugestellt.<br />Bei allfälligen Fragen wende dich bitte an: ok@pfila23.ch<br /><br />Jublastische Grüsse<br />Das Pfila23 Team"
                 },
                 "toRecipients": [
                     {
