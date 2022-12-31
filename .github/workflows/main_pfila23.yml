@@ -41,4 +41,4 @@ jobs:
           app-name: 'pfila23'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C5D0DFF562DE40B7B042C0AAFD3555A8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4CF3E09CE7C348788FAB39548E7B6D8B }}
