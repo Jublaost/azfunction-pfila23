@@ -15,18 +15,27 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     let token = await getToken();
     //context.log("Token: ", token)
     //context.log(req.body)
-    let upload = await uploadSignature(token, req.body.signature, req.body.vorname + '-' + req.body.nachname)
-    context.log(upload)
-    let response = await postListItem(token, req.body, upload);
-    context.log(response)
-    let mail = await sendMail(token, req.body);
-    context.log(mail)
+    try {
+        let upload = await uploadSignature(token, req.body.signature, req.body.vorname + '-' + req.body.nachname)
+        //context.log("Upload: ", upload)
+        let response = await postListItem(token, req.body, upload);
+        context.log("Item: ", response)
+        context.log("CODE Item: ", response.code)
+        context.log("Response Item: ", response.response.status)
+        let mail = await sendMail(token, req.body);
+        context.log("Mail: ", mail)
 
-    context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: req.body
-    };
-
+        context.res = {
+            status: 200, /* Defaults to 200 */
+            body: req.body
+        };
+    } catch (e) {
+        context.log(e)
+        context.res = {
+            status: 500, /* Defaults to 200 */
+            body: "server error"
+        };
+    }
 };
 
 export default httpTrigger;
@@ -68,19 +77,19 @@ async function postListItem(token: string, body: any, upload: any): Promise<any>
             "fields": {
                 "Title": body.vorname + ' ' + body.nachname,
                 "Schar": body.schar,
-                "Adresse": body.adresse + '\n' + body.plz + ' ' + body.ort,
-                "Volljaehrig": volljaehrig,
-                "Vormund": body.vormund,
-                "Email": body.email,
-                "Notfallkontakt": body.notfallkontakt,
-                "Notfallnummer": body.notfallnummer,
-                "Arzt": body.arzt,
-                "Krankenkasse": body.kk,
-                "AHV": body.ahv,
-                "Krankheiten": body.krankheiten,
-                "Essgewohnheiten@odata.type": "Collection(Edm.String)",
-                "Essgewohnheiten": essgewohnheiten,
-                "Nachricht": body.sonstiges
+                //"Adresse": body.adresse + '\n' + body.plz + ' ' + body.ort,
+                //"Volljaehrig": volljaehrig,
+                //"Vormund": body.vormund,
+                //"Email": body.email,
+                //"Notfallkontakt": body.notfallkontakt,
+                //"Notfallnummer": body.notfallnummer,
+                //"Arzt": body.arzt,
+                //"Krankenkasse": body.kk,
+                //"AHV": body.ahv,
+                //"Krankheiten": body.krankheiten,
+                //"Essgewohnheiten@odata.type": "Collection(Edm.String)",
+                //"Essgewohnheiten": essgewohnheiten,
+                //"Nachricht": body.sonstiges
             }
         }
     }
