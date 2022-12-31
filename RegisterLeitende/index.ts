@@ -19,8 +19,14 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     try {
         let upload = await uploadSignature(token, req.body.signature, req.body.vorname + '-' + req.body.nachname)
         context.log("Upload: ", upload)
+        if (upload.response.data.error) {
+            context.log("ERROR: ", upload.response.data.error)
+        }
         let response = await postListItem(token, req.body, upload);
         context.log("Item: ", response)
+        if (response.response.data.error) {
+            context.log("ERROR: ", response.response.data.error)
+        }
         let mail = await sendMail(token, req.body);
         context.log("Item: ", mail)
 
