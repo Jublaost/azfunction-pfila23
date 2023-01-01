@@ -74,6 +74,8 @@ async function uploadFile(token: string, file: string, filename: string) {
 
 async function postListItem(token: string, body: any): Promise<any> {
     let volljaehrig: boolean = body.age == "yes" ? true : false;
+    let noImpfAusweis: boolean = body.noimpfausweis == "yes" ? true : false;
+
     let essgewohnheiten: string[] = body['essgewohnheiten'] ? body['essgewohnheiten'].split(";") : [];
 
     let config: AxiosRequestConfig = {
@@ -98,7 +100,8 @@ async function postListItem(token: string, body: any): Promise<any> {
                 "Krankheiten": body.krankheiten,
                 "Essgewohnheiten@odata.type": "Collection(Edm.String)",
                 "Essgewohnheiten": essgewohnheiten,
-                "Nachricht": body.sonstiges
+                "Nachricht": body.sonstiges,
+                "NoImpfAusweis": noImpfAusweis
             }
         }
     }
