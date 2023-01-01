@@ -14,16 +14,22 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log('HTTP trigger function processed a request.');
     let token = await getToken();
     //context.log("Token: ", token)
-    //context.log(req.body)
+    context.log(req.body)
+
     try {
-        let upload = await uploadSignature(token, req.body.signature, req.body.vorname + '-' + req.body.nachname)
-        //context.log("Upload: ", upload)
-        let response = await postListItem(token, req.body, upload);
+        if (req.body.signature) {
+            let signatureFileUpload = await uploadFile(token, req.body.signature, req.body.vorname + '-' + req.body.nachname + '-signature')
+            context.log("Signatur Upload: ", signatureFileUpload);
+        }
+        if (req.body.impfausweis) {
+            let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname + '-' + req.body.nachname + '-impfausweis')
+            context.log("Impfausweis Upload: ", impfausweisFileUpload);
+        }
+
+        let response = await postListItem(token, req.body);
         context.log("Item: ", response)
-        context.log("CODE Item: ", response.code)
-        context.log("Response Item: ", response.response.status)
         let mail = await sendMail(token, req.body);
-        context.log("Mail: ", mail)
+        context.log("Mail send", mail)
 
         context.res = {
             status: 200, /* Defaults to 200 */
@@ -32,7 +38,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     } catch (e) {
         context.log(e)
         context.res = {
-            status: 500, /* Defaults to 200 */
+            status: 500,
             body: "server error"
         };
     }
@@ -40,19 +46,22 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 export default httpTrigger;
 
-async function uploadSignature(token: string, signature: string, filename: string) {
-    const byteArray = Buffer.from(signature.replace(/^[\w\d;:\/]+base64\,/g, ''), 'base64');
+async function uploadFile(token: string, file: string, filename: string) {
+    let filePrefix = file.split(';')[0];
+    let fileContentType = filePrefix.split(':')[1];
+    let fileExtenstion = fileContentType.split('/')[1];
+
+    const byteArray = Buffer.from(file.replace(/^[\w\d;:\/]+base64\,/g, ''), 'base64');
 
     let config: AxiosRequestConfig = {
         method: 'put',
-        url: MS_GRAPH_ENDPOINT_UPLOAD + filename + '-signature.png:/content',
+        url: MS_GRAPH_ENDPOINT_UPLOAD + filename + '.' + fileExtenstion + ':/content',
         headers: {
             'Authorization': 'Bearer ' + token, //the token is a variable which holds the token
-            'content-type': 'image/png'
+            'content-type': fileContentType
         },
         data: byteArray
     }
-
 
     return await axios(config)
         .then(response => {
@@ -63,7 +72,7 @@ async function uploadSignature(token: string, signature: string, filename: strin
         });
 }
 
-async function postListItem(token: string, body: any, upload: any): Promise<any> {
+async function postListItem(token: string, body: any): Promise<any> {
     let volljaehrig: boolean = body.age == "yes" ? true : false;
     let essgewohnheiten: string[] = body['essgewohnheiten'] ? body['essgewohnheiten'].split(";") : [];
 
@@ -77,7 +86,7 @@ async function postListItem(token: string, body: any, upload: any): Promise<any>
             "fields": {
                 "Title": body.vorname + ' ' + body.nachname,
                 "Schar": body.schar,
-                //"Adresse": body.adresse + '\n' + body.plz + ' ' + body.ort,
+                "Adresse": body.adresse + '\n' + body.plz + ' ' + body.ort,
                 //"Volljaehrig": volljaehrig,
                 //"Vormund": body.vormund,
                 //"Email": body.email,

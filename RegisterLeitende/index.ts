@@ -3,32 +3,33 @@ import { getToken } from "../Common/Token";
 import axios, { AxiosRequestConfig } from 'axios';
 
 const SITE_ID = process.env.SITE_ID;
-const SITE_ASSETS_ID = process.env.SITE_ASSETS_ID;
+const DRIVE_ID = process.env.DRIVE_ID;
 const LIST_ID = process.env.LEITENDE_LIST_ID;
 
 const MS_GRAPH_ENDPOINT_LISTITEM = 'https://graph.microsoft.com/v1.0/sites/' + SITE_ID + '/lists/' + LIST_ID + '/items';
-const MS_GRAPH_ENDPOINT_UPLOAD = 'https://graph.microsoft.com/v1.0/sites/' + SITE_ID + '/drives/' + SITE_ASSETS_ID + '/root:/Lists/' + LIST_ID + '/';
+const MS_GRAPH_ENDPOINT_UPLOAD = 'https://graph.microsoft.com/v1.0/drives/' + DRIVE_ID + '/root:/';
 const MS_GRAPH_ENDPOINT_SENDMAIL = 'https://graph.microsoft.com/v1.0/users/ok@pfila23.ch/sendMail';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
     let token = await getToken();
     //context.log("Token: ", token)
-    //context.log(req.body)
+    context.log(req.body)
 
     try {
-        let upload = await uploadSignature(token, req.body.signature, req.body.vorname + '-' + req.body.nachname)
-        context.log("Upload: ", upload)
-        if (upload.response.data.error) {
-            context.log("ERROR: ", upload.response.data.error)
+        if (req.body.signature) {
+            let signatureFileUpload = await uploadFile(token, req.body.signature, req.body.vorname + '-' + req.body.nachname + '-signature')
+            context.log("Signatur Upload: ", signatureFileUpload);
         }
-        let response = await postListItem(token, req.body, upload);
+        if (req.body.impfausweis) {
+            let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname + '-' + req.body.nachname + '-impfausweis')
+            context.log("Impfausweis Upload: ", impfausweisFileUpload);
+        }
+
+        let response = await postListItem(token, req.body);
         context.log("Item: ", response)
-        if (response.response.data.error) {
-            context.log("ERROR: ", response.response.data.error)
-        }
         let mail = await sendMail(token, req.body);
-        context.log("Item: ", mail)
+        context.log("Mail send", mail)
 
         context.res = {
             status: 200, /* Defaults to 200 */
@@ -37,7 +38,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     } catch (e) {
         context.log(e)
         context.res = {
-            status: 500, /* Defaults to 200 */
+            status: 500,
             body: "server error"
         };
     }
@@ -45,19 +46,22 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 export default httpTrigger;
 
-async function uploadSignature(token: string, signature: string, filename: string) {
-    const byteArray = Buffer.from(signature.replace(/^[\w\d;:\/]+base64\,/g, ''), 'base64');
+async function uploadFile(token: string, file: string, filename: string) {
+    let filePrefix = file.split(';')[0];
+    let fileContentType = filePrefix.split(':')[1];
+    let fileExtenstion = fileContentType.split('/')[1];
+
+    const byteArray = Buffer.from(file.replace(/^[\w\d;:\/]+base64\,/g, ''), 'base64');
 
     let config: AxiosRequestConfig = {
         method: 'put',
-        url: MS_GRAPH_ENDPOINT_UPLOAD + filename + '-signature.png:/content',
+        url: MS_GRAPH_ENDPOINT_UPLOAD + filename + '.' + fileExtenstion + ':/content',
         headers: {
             'Authorization': 'Bearer ' + token, //the token is a variable which holds the token
-            'content-type': 'image/png'
+            'content-type': fileContentType
         },
         data: byteArray
     }
-
 
     return await axios(config)
         .then(response => {
@@ -68,7 +72,7 @@ async function uploadSignature(token: string, signature: string, filename: strin
         });
 }
 
-async function postListItem(token: string, body: any, upload: any): Promise<any> {
+async function postListItem(token: string, body: any): Promise<any> {
     let volljaehrig: boolean = body.age == "yes" ? true : false;
     let essgewohnheiten: string[] = body['essgewohnheiten'] ? body['essgewohnheiten'].split(";") : [];
 

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+    "formidable": "^2.1.1",
+    "parse-multipart": "^1.0.4",
     "qs": "^6.11.0",
     "uuid": "^9.0.0"
   },
