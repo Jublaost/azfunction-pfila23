@@ -106,7 +106,7 @@ async function uploadFile(token: string, file: string, filename: string) {
 
     return await axios(config)
         .then(response => {
-            return response.data;
+            return response;
         })
         .catch(error => {
             return error;
