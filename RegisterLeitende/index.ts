@@ -22,9 +22,12 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     if (!validation) {
         context.log("validation failed");
         context.res = {
-            status: 500
+            status: 500,
+            message: "Recaptcha failed"
         }
         return
+    } else {
+        context.log("Recaptcha Succesful validated");
     }
 
     try {
