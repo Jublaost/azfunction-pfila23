@@ -128,6 +128,7 @@ async function postListItem(token: string, body: any): Promise<any> {
             "fields": {
                 "Title": body.vorname + ' ' + body.nachname,
                 "Geschlecht": body.gender,
+                "Geburtstag": body.geburtstag,
                 "Schar": body.schar,
                 "Adresse": body.adresse + '\n' + body.plz + ' ' + body.ort,
                 "Vormund": body.vormund,
