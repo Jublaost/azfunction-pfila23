@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 const RECAPTCHA = process.env["recaptchaCodev3"]
+if (!RECAPTCHA) throw Error('ENVIRONMENT variables incomplete');
 
 export async function validateRECAP(context: any, token: string) {
     let config: AxiosRequestConfig = {

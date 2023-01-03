@@ -1,6 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import { getToken } from "../Common/Token";
 import axios, { AxiosRequestConfig } from 'axios';
+import { validateRECAP } from "../Common/Recaptcha";
 
 const SITE_ID = process.env.SITE_ID;
 const DRIVE_ID = process.env.DRIVE_ID;
