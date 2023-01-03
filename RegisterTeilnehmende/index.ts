@@ -34,7 +34,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         if (req.body.signature) {
             let signatureFileUpload = await uploadFile(token, req.body.signature, req.body.vorname + '-' + req.body.nachname + '-signature')
             context.log("Signatur Upload: ", signatureFileUpload);
-            if (signatureFileUpload.status == 201) {
+            if (signatureFileUpload.status == 201 || signatureFileUpload.status == 200) {
                 context.log(signatureFileUpload);
             } else {
                 context.log("Error: ", signatureFileUpload)
@@ -48,7 +48,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         if (req.body.impfausweis) {
             let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname + '-' + req.body.nachname + '-impfausweis')
             context.log("Impfausweis Upload: ", impfausweisFileUpload);
-            if (impfausweisFileUpload.status == 201) {
+            if (impfausweisFileUpload.status == 201 || impfausweisFileUpload.status == 200) {
                 context.log(impfausweisFileUpload);
             } else {
                 context.log("Error: ", impfausweisFileUpload)
@@ -62,7 +62,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
         let response = await postListItem(token, req.body);
         context.log("Status: ", response.status);
-        if (response.status == 201) {
+        if (response.status == 201 || response.status == 200) {
             context.log(response.data);
             let mail = await sendMail(token, req.body);
             context.log("Mail send", mail)
