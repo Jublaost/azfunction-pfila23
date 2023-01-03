@@ -3,11 +3,11 @@ import { getToken } from "../Common/Token";
 import axios, { AxiosRequestConfig } from 'axios';
 
 const SITE_ID = process.env.SITE_ID;
-const SITE_ASSETS_ID = process.env.SITE_ASSETS_ID;
+const DRIVE_ID = process.env.DRIVE_ID;
 const LIST_ID = process.env.TN_LIST_ID;
 
 const MS_GRAPH_ENDPOINT_LISTITEM = 'https://graph.microsoft.com/v1.0/sites/' + SITE_ID + '/lists/' + LIST_ID + '/items';
-const MS_GRAPH_ENDPOINT_UPLOAD = 'https://graph.microsoft.com/v1.0/sites/' + SITE_ID + '/drives/' + SITE_ASSETS_ID + '/root:/Lists/' + LIST_ID + '/';
+const MS_GRAPH_ENDPOINT_UPLOAD = 'https://graph.microsoft.com/v1.0/drives/' + DRIVE_ID + '/root:/';
 const MS_GRAPH_ENDPOINT_SENDMAIL = 'https://graph.microsoft.com/v1.0/users/ok@pfila23.ch/sendMail';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
