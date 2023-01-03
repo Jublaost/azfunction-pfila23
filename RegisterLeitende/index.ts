@@ -16,6 +16,16 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     //context.log("Token: ", token)
     context.log("Body: ", req.body)
 
+    let validation = await validateRECAP(context, req.body["g-recaptcha-response"]);
+
+    if (!validation) {
+        context.log("validation failed");
+        context.res = {
+            status: 500
+        }
+        return
+    }
+
     try {
         if (req.body.signature) {
             let signatureFileUpload = await uploadFile(token, req.body.signature, req.body.vorname + '-' + req.body.nachname + '-signature')
@@ -28,6 +38,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                     status: 500,
                     body: "server error"
                 };
+                return
             }
         }
         if (req.body.impfausweis) {
@@ -41,6 +52,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                     status: 500,
                     body: "server error"
                 };
+                return
             }
         }
 
