@@ -34,7 +34,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         if (req.body.signature) {
             let signatureFileUpload = await uploadFile(token, req.body.signature, req.body.vorname + '-' + req.body.nachname + '-signature')
             context.log("Signatur Upload: ", signatureFileUpload);
-            if (signatureFileUpload.status == 200) {
+            if (signatureFileUpload.status == 201) {
                 context.log(signatureFileUpload);
             } else {
                 context.log("Error: ", signatureFileUpload)
