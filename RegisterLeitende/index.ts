@@ -48,7 +48,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         if (req.body.impfausweis) {
             let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname + '-' + req.body.nachname + '-impfausweis')
             context.log("Impfausweis Upload: ", impfausweisFileUpload);
-            if (impfausweisFileUpload.status == 200) {
+            if (impfausweisFileUpload.status == 201) {
                 context.log(impfausweisFileUpload);
             } else {
                 context.log("Error: ", impfausweisFileUpload)
