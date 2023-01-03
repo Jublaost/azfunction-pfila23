@@ -14,27 +14,52 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log('HTTP trigger function processed a request.');
     let token = await getToken();
     //context.log("Token: ", token)
-    context.log(req.body)
+    context.log("Body: ", req.body)
 
     try {
         if (req.body.signature) {
             let signatureFileUpload = await uploadFile(token, req.body.signature, req.body.vorname + '-' + req.body.nachname + '-signature')
             context.log("Signatur Upload: ", signatureFileUpload);
+            if (signatureFileUpload.status == 200) {
+                context.log(signatureFileUpload);
+            } else {
+                context.log("Error: ", signatureFileUpload)
+                context.res = {
+                    status: 500,
+                    body: "server error"
+                };
+            }
         }
         if (req.body.impfausweis) {
             let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname + '-' + req.body.nachname + '-impfausweis')
             context.log("Impfausweis Upload: ", impfausweisFileUpload);
+            if (impfausweisFileUpload.status == 200) {
+                context.log(impfausweisFileUpload);
+            } else {
+                context.log("Error: ", impfausweisFileUpload)
+                context.res = {
+                    status: 500,
+                    body: "server error"
+                };
+            }
         }
 
         let response = await postListItem(token, req.body);
-        context.log("Item: ", response)
-        let mail = await sendMail(token, req.body);
-        context.log("Mail send", mail)
-
-        context.res = {
-            status: 200, /* Defaults to 200 */
-            body: req.body
-        };
+        context.log("Status: ", response.status);
+        if (response.status == 201) {
+            context.log(response.data);
+            let mail = await sendMail(token, req.body);
+            context.log("Mail send", mail)
+            context.res = {
+                status: 200,
+            };
+        } else {
+            context.log("Error: ", response)
+            context.res = {
+                status: 500,
+                body: "server error"
+            };
+        }
     } catch (e) {
         context.log(e)
         context.res = {
@@ -74,6 +99,7 @@ async function uploadFile(token: string, file: string, filename: string) {
 
 async function postListItem(token: string, body: any): Promise<any> {
     let volljaehrig: boolean = body.age == "yes" ? true : false;
+    let slrg: boolean = body.slrg == "yes" ? true : false;
     let noImpfAusweis: boolean = body.noimpfausweis == "yes" ? true : false;
 
     let essgewohnheiten: string[] = body['essgewohnheiten'] ? body['essgewohnheiten'].split(";") : [];
@@ -87,19 +113,26 @@ async function postListItem(token: string, body: any): Promise<any> {
         data: {
             "fields": {
                 "Title": body.vorname + ' ' + body.nachname,
+                "Geschlecht": body.gender,
                 "Schar": body.schar,
+                "Kurs": body.kurs,
+                "SLRG": slrg,
                 "Adresse": body.adresse + '\n' + body.plz + ' ' + body.ort,
                 "Volljaehrig": volljaehrig,
                 "Vormund": body.vormund,
                 "Email": body.email,
                 "Notfallkontakt": body.notfallkontakt,
                 "Notfallnummer": body.notfallnummer,
-                "Arzt": body.arzt,
+                "Arzt": body.hausarzt,
+                "Unfallversicherung": body.unfallversicherung,
                 "Krankenkasse": body.kk,
                 "AHV": body.ahv,
                 "Krankheiten": body.krankheiten,
+                "Allergien": body.allergien,
                 "Essgewohnheiten@odata.type": "Collection(Edm.String)",
                 "Essgewohnheiten": essgewohnheiten,
+                "AndereEssstoerungen": body.essstoerungen,
+                "TShirt": body["shirt-size"],
                 "Nachricht": body.sonstiges,
                 "NoImpfAusweis": noImpfAusweis
             }
@@ -108,7 +141,7 @@ async function postListItem(token: string, body: any): Promise<any> {
 
     return await axios(config)
         .then(response => {
-            return response.data;
+            return response;
         })
         .catch(error => {
             return error;
@@ -144,7 +177,7 @@ async function sendMail(token: string, body: any) {
 
     return await axios(config)
         .then(response => {
-            return response.data;
+            return response;
         })
         .catch(error => {
             return error;
