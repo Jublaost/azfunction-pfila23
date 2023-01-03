@@ -31,7 +31,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     }
 
     try {
-        if (req.body.signature) {
+        if (req.body.signature && req.body.signature.startsWith("data:")) {
             let signatureFileUpload = await uploadFile(token, req.body.signature, req.body.vorname + '-' + req.body.nachname + '-signature')
             context.log("Signatur Upload: ", signatureFileUpload);
             if (signatureFileUpload.status == 201 || signatureFileUpload.status == 200) {
@@ -45,7 +45,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                 return
             }
         }
-        if (req.body.impfausweis) {
+        if (req.body.impfausweis && req.body.impfausweis.startsWith("data:")) {
             let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname + '-' + req.body.nachname + '-impfausweis')
             context.log("Impfausweis Upload: ", impfausweisFileUpload);
             if (impfausweisFileUpload.status == 201 || impfausweisFileUpload.status == 200) {
