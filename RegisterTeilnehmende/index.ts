@@ -45,34 +45,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                 return
             }
         }
-        if (req.body.kkk1 && req.body.signature.startsWith("data:")) {
-            let kkk1FileUpload = await uploadFile(token, req.body.signature, req.body.vorname + '-' + req.body.nachname + '-kkk1')
-            context.log("KKK1 Upload: ", kkk1FileUpload);
-            if (kkk1FileUpload.status == 201 || kkk1FileUpload.status == 200) {
-                context.log(kkk1FileUpload);
-            } else {
-                context.log("Error: ", kkk1FileUpload)
-                context.res = {
-                    status: 500,
-                    body: "server error"
-                };
-                return
-            }
-        }
-        if (req.body.kkk2 && req.body.signature.startsWith("data:")) {
-            let kkk2FileUpload = await uploadFile(token, req.body.signature, req.body.vorname + '-' + req.body.nachname + '-kkk2')
-            context.log("KKK2 Upload: ", kkk2FileUpload);
-            if (kkk2FileUpload.status == 201 || kkk2FileUpload.status == 200) {
-                context.log(kkk2FileUpload);
-            } else {
-                context.log("Error: ", kkk2FileUpload)
-                context.res = {
-                    status: 500,
-                    body: "server error"
-                };
-                return
-            }
-        }
         if (req.body.impfausweis && req.body.impfausweis.startsWith("data:")) {
             let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname + '-' + req.body.nachname + '-impfausweis')
             context.log("Impfausweis Upload: ", impfausweisFileUpload);
