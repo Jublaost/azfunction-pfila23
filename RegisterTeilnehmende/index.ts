@@ -17,6 +17,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     //context.log("Token: ", token)
     context.log("Body: ", req.body)
 
+    const unixTime = Math.floor(Date.now() / 1000)
+
     let validation = await validateRECAP(context, req.body["g-recaptcha-response"]);
 
     if (!validation) {
@@ -32,7 +34,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     try {
         if (req.body.signature && req.body.signature.startsWith("data:")) {
-            let signatureFileUpload = await uploadFile(token, req.body.signature, req.body.vorname.replace(/[^\x00-\x7F]/g, "") + '-' + req.body.nachname.replace(/[^\x00-\x7F]/g, "") + '-signature')
+            let signatureFileUpload = await uploadFile(token, req.body.signature, req.body.vorname.replace(/[^\x00-\x7F]/g, "") + '-' + req.body.nachname.replace(/[^\x00-\x7F]/g, "") + '-' + unixTime + '-signature')
             context.log("Signatur Upload: ", signatureFileUpload);
             if (signatureFileUpload.status == 201 || signatureFileUpload.status == 200) {
                 context.log(signatureFileUpload);
@@ -46,7 +48,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             }
         }
         if (req.body.impfausweis && req.body.impfausweis.startsWith("data:")) {
-            let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname.replace(/[^\x00-\x7F]/g, "") + '-' + req.body.nachname.replace(/[^\x00-\x7F]/g, "") + '-impfausweis')
+            let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname.replace(/[^\x00-\x7F]/g, "") + '-' + req.body.nachname.replace(/[^\x00-\x7F]/g, "") + '-' + unixTime + '-impfausweis')
             context.log("Impfausweis Upload: ", impfausweisFileUpload);
             if (impfausweisFileUpload.status == 201 || impfausweisFileUpload.status == 200) {
                 context.log(impfausweisFileUpload);
