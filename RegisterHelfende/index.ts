@@ -5,7 +5,7 @@ import { validateRECAP } from "../Common/Recaptcha";
 
 const SITE_ID = process.env.SITE_ID;
 const DRIVE_ID = process.env.DRIVE_ID;
-const LIST_ID = process.env.LEITENDE_LIST_ID;
+const LIST_ID = process.env.HELFENDE_LIST_ID;
 
 const MS_GRAPH_ENDPOINT_LISTITEM = 'https://graph.microsoft.com/v1.0/sites/' + SITE_ID + '/lists/' + LIST_ID + '/items';
 const MS_GRAPH_ENDPOINT_UPLOAD = 'https://graph.microsoft.com/v1.0/drives/' + DRIVE_ID + '/root:/';
