@@ -48,21 +48,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             }
         }
 
-        if (req.body.impfausweis && req.body.impfausweis.startsWith("data:")) {
-            let impfausweisFileUpload = await uploadFile(token, req.body.impfausweis, req.body.vorname.replace(/[^\x00-\x7F]/g, "") + '-' + req.body.nachname.replace(/[^\x00-\x7F]/g, "") + '-' + unixTime + '-impfausweis')
-            context.log("Impfausweis Upload: ", impfausweisFileUpload);
-            if (impfausweisFileUpload.status == 201 || impfausweisFileUpload.status == 200) {
-                context.log(impfausweisFileUpload);
-            } else {
-                context.log("Error: ", impfausweisFileUpload)
-                context.res = {
-                    status: 500,
-                    body: "server error"
-                };
-                return
-            }
-        }
-
         let response = await postListItem(token, req.body);
         context.log("Status: ", response.status);
         if (response.status == 201 || response.status == 200) {
@@ -147,13 +132,6 @@ async function postListItem(token: string, body: any): Promise<any> {
                 "Email": body.email,
                 "Notfallkontakt": body.notfallkontakt,
                 "Notfallnummer": body.notfallnummer,
-                "Arzt": body.hausarzt,
-                "Unfallversicherung": body.unfallversicherung,
-                "Krankenkasse": body.kk,
-                "AHV": body.ahv,
-                "KKKNr": body.kkknr,
-                "Krankheiten": body.krankheiten,
-                "Allergien": body.allergien,
                 "Essgewohnheiten@odata.type": "Collection(Edm.String)",
                 "Essgewohnheiten": essgewohnheiten,
                 "AndereEssstoerungen": body.essstoerungen,
