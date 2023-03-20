@@ -137,7 +137,6 @@ async function postListItem(token: string, body: any): Promise<any> {
                 "AndereEssstoerungen": body.essstoerungen,
                 "TShirt": body["shirt-size"],
                 "Nachricht": body.sonstiges,
-                "NoImpfAusweis": noImpfAusweis,
                 "Schichten@odata.type": "Collection(Edm.String)",
                 "Schichten": datesHelfende,
                 "Anzahl": body.helpcount
